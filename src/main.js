@@ -5,22 +5,17 @@ function pipe (...fs) {
 const modifiers = pipe(
 	StateModifier,
 	FetchModifier,
-	HtmlModifier
+	EventsModifier,
+	HtmlModifier,
 )
 
 const wrappers = pipe( // This should be compose.
 	HtmlWrapper,
 	FetchWrapper,
 	StateWrapper,
-	EventWrapper('input', 'submit', 'fetchResult')
+	EventWrapper
 )
 
 const main = wrappers(modifiers)
 
-main({
-	state: {
-		username: '',
-		password: '',
-		loginState: 'idle'
-	}
-})
+main({})

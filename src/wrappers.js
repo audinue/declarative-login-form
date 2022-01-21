@@ -1,17 +1,19 @@
-function EventWrapper (...types) {
-	return function (f) {
-		let initial = true
-		return function (t) {
-			if (initial) {
-				for (const type of types) {
-					addEventListener(type, function (e) {
-						f({ ...t, event: e })
-					})
-				}
-				initial = false
+function EventWrapper  (f) {
+	let initial = true
+	return function (t) {
+		const r = f({ ...t, event: new Event('null') })
+		if (initial) {
+			for (const type of r.event.types) {
+				addEventListener(type, function (e) {
+					if (r.event.preventDefault(e)) {
+						e.preventDefault()
+					}
+					f({ ...t, event: e })
+				})
 			}
-			return f({ ...t, event: null })
+			initial = false
 		}
+		return r
 	}
 }
 

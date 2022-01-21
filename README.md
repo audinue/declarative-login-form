@@ -10,7 +10,7 @@ A no framework purely functional declarative login form example.
 - This example can be ported to TypeScript, Java or C#.
 - `Modifier`s deal with pure stuffs while `Wrapper`s deal with impure stuffs while `Main` initializes stuffs.
 - Modifiers transforms the context to another.
-- Wrappers wraps the modifiers so that they can do the "dirty" stuffs.
+- Wrappers transforms the modifier? they wraps the modifiers so that they can do the "dirty" stuffs.
 - Think modifiers like the 3D modeling apps' modifiers.
 - Think wrappers like the System in Entity Component System.
 - The wrappers are the framework... actually.

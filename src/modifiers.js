@@ -1,45 +1,39 @@
-function UpdateUsername ({ state, event }) {
-	return event !== null && event.type === 'input' && event.target.id === 'username'
-		? event.target.value
-		: state.username
-}
-
-function UpdatePassword ({ state, event }) {
-	return event !== null && event.type === 'input' && event.target.id === 'password'
-		? event.target.value
-		: state.password
-}
-
-function UpdateLoading ({ state, event }) {
-	return event !== null && event.type === 'submit' && event.target.id === 'loginForm'
-		? (event.preventDefault() /* HACK */, true)
-		: state.loading && event !== null && event.type === 'fetchResult'
-			? false
-			: state.loading
-}
-
-function UpdateRequesting ({ state, event }) {
-	return event !== null && event.type === 'submit' && event.target.id === 'loginForm'
-}
-
-function UpdateLoginState ({ state, event }) {
-	return event !== null && event.type === 'fetchResult'
-		? (event.data ? 'success' : 'failed')
-		: state.loginState
+function UpdateState ({ state, event }) {
+	return {
+		username: event.type === 'input' && event.target.id === 'username'
+			? event.target.value
+			: state.username,
+		password: event.type === 'input' && event.target.id === 'password'
+			? event.target.value
+			: state.password,
+		loading: event.type === 'submit' && event.target.id === 'loginForm'
+			? true
+			: state.loading && event.type === 'fetchResult'
+				? false
+				: state.loading,
+		requesting: event.type === 'submit' && event.target.id === 'loginForm',
+		loginState: event.type === 'fetchResult'
+			? (event.data ? 'success' : 'failed')
+			: state.loginState
+	}
 }
 
 function StateModifier (context) {
-	return {
-		...context,
-		state: {
-			...context.state,
-			username: UpdateUsername(context),
-			password: UpdatePassword(context),
-			loading: UpdateLoading(context),
-			requesting: UpdateRequesting(context),
-			loginState: UpdateLoginState(context)
+	return context.state === undefined || (event.type === 'click' && event.target.id === 'reset')
+		? {
+			...context,	
+			state: {
+				username: '',
+				password: '',
+				loading: false,
+				requesting: false,
+				loginState: 'idle'
+			}
 		}
-	}
+		: {
+			...context,
+			state: UpdateState(context)
+		}
 }
 
 function FetchModifier (context) {
@@ -68,7 +62,23 @@ function HtmlModifier (context) {
 				</form>
 			`
 			: loginState === 'success'
-				? `Login success!`
-				: `Login failed!`
+				? `
+					Login success!<br>
+					<button id="reset">Reset</button>
+				`
+				: `
+					Login failed!<br>
+					<button id="reset">Reset</button>
+				`
+	}
+}
+
+function EventsModifier (context) {
+	return {
+		...context,
+		event: {
+			types: ['click', 'input', 'submit', 'fetchResult'],
+			preventDefault: e => e.type === 'submit'
+		}
 	}
 }
